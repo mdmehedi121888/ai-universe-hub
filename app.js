@@ -1,15 +1,27 @@
+// toggleSpinner function
+
 const toggleSpinner = (isLoading) => {
   const loadSpinner = document.getElementById("loader");
   if (isLoading) loadSpinner.classList.remove("d-none");
   else loadSpinner.classList.add("d-none");
 };
 
+// loadData function
+
 const loadData = (dataLimit) => {
+  console.log(dataLimit);
+  const seeMoreBtn = document.getElementById('see-more-btn');
+  if(dataLimit==6)
+   seeMoreBtn.classList.remove("d-none");
+   else
+   seeMoreBtn.classList.add("d-none");
   toggleSpinner(true);
   fetch("https://openapi.programming-hero.com/api/ai/tools")
     .then((res) => res.json())
     .then((data) => displayData(data.data.tools, dataLimit));
 };
+
+// displayData function
 
 const displayData = (datas, dataLimit) => {
   const cardContainer = document.getElementById("card-container");
@@ -20,11 +32,7 @@ const displayData = (datas, dataLimit) => {
 
     const div = document.createElement("div");
     div.classList.add("col");
-    {
-      /* <li>${data.features[0]}</li>
-                         <li>${data.features[1]}</li>
-                         <li>${data.features[2]}</li> */
-    }
+
     div.innerHTML = `
         <div class="card">
                         <img src="${
@@ -66,29 +74,40 @@ const displayData = (datas, dataLimit) => {
     cardContainer.appendChild(div);
   }
 };
+
+
+
 loadData(6);
 toggleSpinner(false);
+
+//seeMore function
+
+
 const seeMore = () => {
   // toggleSpinner(true);
+  
   const cardContainer = document.getElementById("card-container");
   cardContainer.innerText = "";
   loadData();
   toggleSpinner(false);
+  
 };
 
 const modal = (value) => {
-let value1 = '';
-if(value<10)
-{
-  value1+='0';
-}
-value1 += value;
+  let value1 = "";
+  if (value < 10) {
+    value1 += "0";
+  }
+  value1 += value;
   let url = `https://openapi.programming-hero.com/api/ai/tool/${value1}`;
   fetch(url)
     .then((res) => res.json())
     .then((data) => displayModal(data));
   //  console.log(b);
 };
+
+//display modal 
+
 const displayModal = (data) => {
   const rightId = document.getElementById("modal-right");
   const leftId = document.getElementById("modal-left");
@@ -100,15 +119,28 @@ const displayModal = (data) => {
   let score = data.data.accuracy.score * 100;
   console.log(data.data.image_link[0]);
   console.log(data.data);
+
+  // modal pic and input output text 
+
   div.innerHTML = `
 <div class="position-relative">
-<img src="${data.data.image_link[0]}" alt="" style="height:300px;" class="img-fluid">
+<img src="${
+    data.data.image_link[0]
+  }" alt="" style="height:300px;" class="img-fluid">
 <div class="position-absolute"><button class="btn btn-danger rounded" style="margin-top:-560px;margin-left:360px">${score}% accuracy</button></div>
 </div>
 <div class="text-center">
-${data.data?.input_output_examples ? `<h4>${data.data?.input_output_examples[0]?.input}</h4>`:'Can you give any example?'}
+${
+  data.data?.input_output_examples
+    ? `<h4>${data.data?.input_output_examples[0]?.input}</h4>`
+    : "Can you give any example?"
+}
 <br>
-${data.data?.input_output_examples ? `${data.data?.input_output_examples[0]?.output}`:'No! Not Yet! Take a break!!!'}
+${
+  data.data?.input_output_examples
+    ? `${data.data?.input_output_examples[0]?.output}`
+    : "No! Not Yet! Take a break!!!"
+}
 </div>
 
 
@@ -120,13 +152,20 @@ ${data.data?.input_output_examples ? `${data.data?.input_output_examples[0]?.out
   leftId.innerText = "";
   const div1 = document.createElement("div");
   // console.log(data.data.integrations[0])
+
   div1.innerHTML = `
 <h4 class="text-center">${data.data.description}</h4>
 <div class="d-flex text-center justify-content-evenly my-5">
 
-<div class="text-primary">${data.data?.pricing? `${data.data.pricing[0].price}` : ''} <br> ${data.data?.pricing? `${data.data.pricing[0].plan}` : ''}</div>
-<div class="text-primary">${data.data?.pricing? `${data.data.pricing[1].price}` : ''} <br> ${data.data?.pricing? `${data.data.pricing[1].plan}` : ''}</div>
-<div class="text-primary">${data.data?.pricing? `${data.data.pricing[2].price}` : ''} <br> ${data.data?.pricing? `${data.data.pricing[2].plan}` : ''}</div>
+<div class="text-primary">${
+    data.data?.pricing ? `${data.data.pricing[0].price}` : ""
+  } <br> ${data.data?.pricing ? `${data.data.pricing[0].plan}` : ""}</div>
+<div class="text-primary">${
+    data.data?.pricing ? `${data.data.pricing[1].price}` : ""
+  } <br> ${data.data?.pricing ? `${data.data.pricing[1].plan}` : ""}</div>
+<div class="text-primary">${
+    data.data?.pricing ? `${data.data.pricing[2].price}` : ""
+  } <br> ${data.data?.pricing ? `${data.data.pricing[2].plan}` : ""}</div>
 
 </div>
 
@@ -144,9 +183,21 @@ ${data.data?.input_output_examples ? `${data.data?.input_output_examples[0]?.out
 <div>
 <h4 class="">Integrations</h4>
                         <ul>
-                        ${data.data.integrations.length>0? `<li>${data.data.integrations[0]}</li>` :'No Data Found'}
-                        ${data.data.integrations.length>1? `<li>${data.data?.integrations[1]}</li>` :''}
-                        ${data.data.integrations.length>1? `<li>${data.data?.integrations[2]}</li>` :''}
+                        ${
+                          data.data.integrations.length > 0
+                            ? `<li>${data.data.integrations[0]}</li>`
+                            : "No Data Found"
+                        }
+                        ${
+                          data.data.integrations.length > 1
+                            ? `<li>${data.data?.integrations[1]}</li>`
+                            : ""
+                        }
+                        ${
+                          data.data.integrations.length > 2
+                            ? `<li>${data.data?.integrations[2]}</li>`
+                            : ""
+                        }
                            
                          </ul>
 </div>
