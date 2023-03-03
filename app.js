@@ -16,7 +16,7 @@ const loadData = (dataLimit) => {
 const displayData = (datas,dataLimit) => {
   const cardContainer = document.getElementById("card-container");
   for (const data of datas.slice(0,dataLimit)) {
-    console.log(data.published_in);
+    // console.log(data.id);
     const featuresLength = data.features;
     const div = document.createElement("div");
     div.classList.add("col");
@@ -29,16 +29,19 @@ const displayData = (datas,dataLimit) => {
                          <ol>
                          <li>${data.features[0]}</li>
                          <li>${data.features[1]}</li>
-                    
-                           <li>${data.features[2] ? data.features[2] : ''}</li>
+                         <li>${data.features[2]}</li>
                          </ol>
                         <hr class="my-3">
                         <h5 class="card-title mb-3">${data.name}</h5>
                         <img src="images/calendar.png" style="height:12px; width:15px">
                         <span>${data.published_in}</span>
+                       
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn" data-bs-toggle="modal" data-bs-target="#exampleModal" style ="float:right" onclick="modal(${data.id})">
                         <a><img src="images/right-arrow.png" style="height:20px; width:25px; float:right;
                         "> </a>
-                       
+
+                        </button>
                         
                         </div>
                       </div>
@@ -54,4 +57,35 @@ const seeMore = () =>{
   cardContainer.innerText = '';
   loadData();
   toggleSpinner(false);
+}
+
+const modal = (value) => {
+  // let b = '0';
+  // b+=value;
+  const url = `https://openapi.programming-hero.com/api/ai/tool/0${value}`
+  fetch(url)
+  .then(res => res.json())
+  .then(data => displayModal(data));
+//  console.log(b); 
+}
+const displayModal = (data) => {
+  console.log(data.data.accuracy.score);
+const rightId = document.getElementById('modal-right');
+const leftId = document.getElementById('modal-left');
+rightId.innerText = '';
+const div = document.createElement('div');
+let score = data.data.accuracy.score * 100;
+console.log(score);
+div.innerHTML = `
+
+<div class="position-relative">
+<img src="${data.data.image_link[0]}" alt="" style="height:300px; width:100%" >
+<div class="position-absolute"><button class="btn btn-danger rounded" style="margin-top:-560px;margin-left:360px">${score}% accuracy</button></div>
+</div>
+
+
+<h4 class="text-center">${data.data?.input_output_examples[0]?.input}</h4>
+<p class="text-center">${data.data?.input_output_examples[0]?.output}</p>
+`
+rightId.appendChild(div);
 }
