@@ -9,7 +9,7 @@ const toggleSpinner = (isLoading) => {
 // loadData function
 
 const loadData = (dataLimit) => {
-  console.log(dataLimit);
+  // console.log(dataLimit);
   const seeMoreBtn = document.getElementById('see-more-btn');
   if(dataLimit==6)
    seeMoreBtn.classList.remove("d-none");
@@ -39,7 +39,7 @@ const displayData = (datas, dataLimit) => {
                           data.image
                         }" class="card-img-top" style="width:460px; height:260px">
                         <div class="card-body" id="card-body">
-                          <h4 class="card-title">Features</h4>
+                          <h4 class="card-title fw-semibold">Features</h4>
                          <ol>
                          <li>${data.features[0]}</li>
                          <li>${data.features[1]}</li>
@@ -55,7 +55,7 @@ const displayData = (datas, dataLimit) => {
                          }
                          </ol>
                         <hr class="my-3">
-                        <h5 class="card-title mb-3">${data.name}</h5>
+                        <h4 class="card-title mb-3 fw-semibold">${data.name}</h4>
                         <img src="images/calendar.png" style="height:12px; width:15px">
                         <span>${data.published_in}</span>
                        
@@ -84,7 +84,7 @@ toggleSpinner(false);
 
 
 const seeMore = () => {
-  // toggleSpinner(true);
+  toggleSpinner(true);
   
   const cardContainer = document.getElementById("card-container");
   cardContainer.innerText = "";
@@ -117,8 +117,7 @@ const displayModal = (data) => {
   rightId.innerText = "";
   const div = document.createElement("div");
   let score = data.data.accuracy.score * 100;
-  console.log(data.data.image_link[0]);
-  console.log(data.data);
+  console.log(data.data.accuracy.score);
 
   // modal pic and input output text 
 
@@ -127,7 +126,9 @@ const displayModal = (data) => {
 <img src="${
     data.data.image_link[0]
   }" alt="" style="height:300px;" class="img-fluid">
-<div class="position-absolute"><button class="btn btn-danger rounded" style="margin-top:-560px;margin-left:360px">${score}% accuracy</button></div>
+
+  ${data.data.accuracy.score? `<div class="position-absolute"><button class="btn btn-danger rounded" style="margin-top:-560px;margin-left:360px">${score}% accuracy</button></div>` : ''}
+
 </div>
 <div class="text-center">
 ${
@@ -160,10 +161,10 @@ ${
 <div class="text-primary">${
     data.data?.pricing ? `${data.data.pricing[0].price}` : ""
   } <br> ${data.data?.pricing ? `${data.data.pricing[0].plan}` : ""}</div>
-<div class="text-primary">${
+<div class="text-success">${
     data.data?.pricing ? `${data.data.pricing[1].price}` : ""
   } <br> ${data.data?.pricing ? `${data.data.pricing[1].plan}` : ""}</div>
-<div class="text-primary">${
+<div class="text-info">${
     data.data?.pricing ? `${data.data.pricing[2].price}` : ""
   } <br> ${data.data?.pricing ? `${data.data.pricing[2].plan}` : ""}</div>
 
@@ -171,7 +172,7 @@ ${
 
 <div class="d-flex text-center justify-content-evenly">
 <div>
-<h4 class="">Features</h4>
+<h4 >Features</h4>
                         <ul>
                          <li>${data.data.features["1"].feature_name}</li>
                          <li>${data.data.features["2"].feature_name}</li>
@@ -183,18 +184,19 @@ ${
 <div>
 <h4 class="">Integrations</h4>
                         <ul>
+                        
                         ${
-                          data.data.integrations.length > 0
-                            ? `<li>${data.data.integrations[0]}</li>`
+                          data.data?.integrations?.length > 0
+                            ? `<li>${data.data?.integrations[0]}</li>`
                             : "No Data Found"
                         }
                         ${
-                          data.data.integrations.length > 1
+                          data.data?.integrations?.length > 1
                             ? `<li>${data.data?.integrations[1]}</li>`
                             : ""
                         }
                         ${
-                          data.data.integrations.length > 2
+                          data.data?.integrations?.length > 2
                             ? `<li>${data.data?.integrations[2]}</li>`
                             : ""
                         }
@@ -205,3 +207,22 @@ ${
 `;
   leftId.appendChild(div1);
 };
+
+
+function sortBtn() {
+  const seeMoreBtn = document.getElementById('see-more-btn');
+    seeMoreBtn.classList.add("d-none");
+    console.log(seeMoreBtn.classList);
+  fetch('https://openapi.programming-hero.com/api/ai/tools')
+  .then(res => res.json())
+  .then(data => displayByDate(data.data.tools))
+}
+function displayByDate (datas){
+  datas.sort((a, b) => new Date(b.published_in) - new Date(a.published_in));
+
+ const cardContainer = document.getElementById("card-container");
+ cardContainer.textContent = '';
+ displayData(datas);
+
+
+}
